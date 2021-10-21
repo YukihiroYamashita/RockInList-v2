@@ -1,21 +1,39 @@
-import { StatusBar } from 'expo-status-bar';
+import 'react-native-gesture-handler';
+
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { View, StatusBar } from 'react-native';
+import { useFonts } from 'expo-font';
+import { ThemeProvider } from 'styled-components/native';
+import { getStatusBarHeight } from 'react-native-iphone-x-helper';
+import { NavigationContainer } from '@react-navigation/native';
+import { Provider } from 'react-redux';
+
+import { store } from './src/redux';
+
+import theme from './src/global/styles/theme';
+
+import Router from './src/routes/app.routes';
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+  const [loaded] = useFonts({ 
+    LemonMilkLight: require('./src/assets/fonts/LEMONMILK-Light.otf'),
+    LemonMilkBold: require('./src/assets/fonts/LEMONMILK-Bold.otf'),
+  });
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  if(!loaded) { 
+    return <View/>
+  }
+  
+  return (
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <NavigationContainer>
+          <View style={{ backgroundColor: '#1C1C1C', flex: 1, paddingTop: getStatusBarHeight() + 3}}>
+            <StatusBar barStyle='light-content' />
+            <Router/>
+          </View>
+        </NavigationContainer>
+      </ThemeProvider>
+    </Provider>
+  );  
+}
